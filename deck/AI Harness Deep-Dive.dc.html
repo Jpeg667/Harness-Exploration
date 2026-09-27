@@ -20,6 +20,7 @@
     body{margin:0;background:var(--bg)}
     a{color:var(--cyan)} a:hover{color:#35e8e8}
     @keyframes ccFade{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+    sup.ref{font-family:var(--mono);font-size:.55em;color:var(--violet);margin-left:.25em;vertical-align:super}
     @keyframes ccPulse{0%{transform:scale(.55);opacity:.7}100%{transform:scale(1.25);opacity:0}}
   </style>
 </helmet>
@@ -110,10 +111,10 @@
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:22px;margin-bottom:36px">
       <div class="card" style="padding:26px"><div style="font-family:var(--display);font-size:29px;color:var(--text)">Claude Code</div><div style="font-size:24px;color:var(--text-dim);margin-top:10px;line-height:1.55">Anthropic's terminal coding agent. Claude models only; permission prompts; CLAUDE.md memory.</div></div>
       <div class="card" style="padding:26px"><div style="font-family:var(--display);font-size:29px;color:var(--text)">Codex</div><div style="font-size:24px;color:var(--text-dim);margin-top:10px;line-height:1.55">OpenAI's coding agent. CLI + cloud sandbox; AGENTS.md convention for repo instructions.</div></div>
-      <div class="card" style="padding:26px;border-color:var(--violet)"><div style="font-family:var(--display);font-size:29px;color:var(--violet)">Hermes Agent</div><div style="font-size:24px;color:var(--text-dim);margin-top:10px;line-height:1.55">Nous Research, MIT-licensed, model-agnostic personal agent. Memory, skills, 20+ chat platforms.</div></div>
-      <div class="card" style="padding:26px"><div style="font-family:var(--display);font-size:29px;color:var(--text)">Odysseus</div><div style="font-size:24px;color:var(--text-dim);margin-top:10px;line-height:1.55">PewDiePie's self-hosted AI workspace. Local or API models; agents in a Docker container.</div></div>
+      <div class="card" style="padding:26px;border-color:var(--violet)"><div style="font-family:var(--display);font-size:29px;color:var(--violet)">Hermes Agent</div><div style="font-size:24px;color:var(--text-dim);margin-top:10px;line-height:1.55">Nous Research, MIT-licensed, model-agnostic personal agent. Memory, skills, one gateway to Telegram, Discord, Slack, WhatsApp, Signal.<sup class="ref">1</sup></div></div>
+      <div class="card" style="padding:26px"><div style="font-family:var(--display);font-size:29px;color:var(--text)">Odysseus</div><div style="font-size:24px;color:var(--text-dim);margin-top:10px;line-height:1.55">Self-hosted AI workspace, AGPL-3.0. Local (Ollama) or API models; agents in a Docker container. Launched by PewDiePie per press coverage; the repo itself doesn't say so.<sup class="ref">7</sup></div></div>
     </div>
-    <div class="callout bz" style="margin:0"><span class="c-label">Running example: Hermes</span><p style="font-size:26px">Violet callouts through this deck show how <strong>Hermes Agent</strong> implements each concept — it's the interesting case because it is open source, model-agnostic, and ships every harness subsystem (memory, skills, sandboxing) built in, where Claude Code and Codex leave more to you.</p></div>
+    <div class="callout bz" style="margin:0"><span class="c-label">Running example: Hermes<sup class="ref">1</sup></span><p style="font-size:26px">Violet callouts through this deck show how <strong>Hermes Agent</strong> implements each concept — it's the interesting case because it is open source, model-agnostic, and ships every harness subsystem (memory, skills, sandboxing) built in, where Claude Code and Codex leave more to you.</p></div>
   </section>
 
   <section data-label="Recall 01" data-screen-label="06 Recall 01" data-speaker-notes="Answer out loud before opening." style="background:radial-gradient(900px 600px at 80% -10%,var(--bg-glow-violet),transparent 60%),linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:72px 104px;display:flex;flex-direction:column">
@@ -196,7 +197,7 @@
         <ul style="margin:0;padding-left:30px;font-size:26px;line-height:1.7;color:var(--text-dim)">
           <li><code style="color:var(--cyan)">tool_use</code> — "I need another action" → loop continues</li>
           <li><code style="color:var(--green)">end_turn</code> — "I'm done, here's my answer" → loop exits</li>
-          <li><code style="color:var(--amber)">max_tokens</code> — output cut off → harness must handle</li>
+          <li><code style="color:var(--amber)">max_tokens</code> — output cut off → retry with more room (next slide)</li>
         </ul>
       </div>
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px 32px">
@@ -211,21 +212,65 @@
     <div class="callout caution" style="margin:0"><span class="c-label">Caution</span><p style="font-size:26px">A loop with no harness-side cap is an unbounded spend. The model <strong>wants</strong> to keep trying; the harness is where "stop after N attempts, report what you learned" lives.</p></div>
   </section>
 
-  <section data-label="Loop in the wild" data-screen-label="11 Loop in the wild" data-speaker-notes="Every harness has this file. Hermes: conversation_loop.py." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:72px 104px;display:flex;flex-direction:column">
-    <div style="margin-bottom:36px"><div style="font-family:var(--mono);font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);margin-bottom:10px">02 · THE AGENTIC LOOP</div><h2 style="font-family:var(--display);font-weight:700;font-size:58px;margin:0;line-height:1.05">Every harness has this file</h2></div>
-    <p style="font-size:28px;color:var(--text-dim);line-height:1.6;margin:0 0 30px;max-width:36em">Open any harness's source and one module owns the loop. Everything else in the codebase — tools, memory, UI — is called <em>from</em> it. Reading that one file tells you how the whole product works.</p>
-    <div class="callout bz" style="margin:0 0 26px"><span class="c-label">Hermes · conversation_loop.py</span><p style="font-size:26px">Hermes's <code>AIAgent</code> class runs a synchronous loop that handles <strong>provider selection</strong> (which model API), <strong>prompt construction</strong> (system prompt + memory + transcript), <strong>tool execution</strong>, <strong>retries</strong>, and <strong>context compression</strong> — all five concerns in one loop body. The subsystems of §03–§05 are exactly the things this loop calls out to.</p></div>
+  <section data-label="Stop reasons" data-screen-label="11 Stop reasons" data-speaker-notes="Six stop reasons, six harness actions. The max_tokens + tool_use row is the one people get wrong: the tolerant JSON parser returns a valid-looking partial object." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:64px 104px;display:flex;flex-direction:column"><div style="margin-bottom:26px"><div style="font-family:var(--mono);font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);margin-bottom:10px">02 · THE AGENTIC LOOP</div><h2 style="font-family:var(--display);font-weight:700;font-size:54px;margin:0;line-height:1.05">Every stop_reason, and what the harness does</h2></div>
+    <div class="tbl-scroll" style="margin:0 0 18px"><table style="font-size:21px;line-height:1.3">
+      <thead><tr><th style="font-size:20px">stop_reason</th><th style="font-size:22px">The model is saying</th><th style="font-size:22px">Harness action</th></tr></thead><tbody>
+      <tr><td><code style="color:var(--cyan)">tool_use</code></td><td>"Run these, then I'll continue"</td><td>execute every tool_use block, append results, loop</td></tr>
+      <tr><td><code style="color:var(--green)">end_turn</code></td><td>"Done, here is my answer"</td><td>exit the loop, hand text to the user</td></tr>
+      <tr><td><code style="color:var(--amber)">max_tokens</code></td><td>"I was cut off" — output hit the cap</td><td><strong>retry the same request with a bigger max_tokens</strong>; if a tool_use block is present, its input is truncated: never run it</td></tr>
+      <tr><td><code style="color:var(--text-dim)">stop_sequence</code></td><td>"I emitted one of your stop strings"</td><td>treat like end_turn; the string itself is in stop_sequence</td></tr>
+      <tr><td><code style="color:var(--violet)">pause_turn</code></td><td>"A server-side tool loop hit its limit"</td><td>re-send the same transcript unchanged so the server resumes; do not append "Continue"</td></tr>
+      <tr><td><code style="color:var(--red)">refusal</code></td><td>"Safety classifier declined this turn"</td><td>never execute that turn's tools; surface to the user or fall back to another model</td></tr>
+    </tbody></table></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+      <div class="callout warn" style="margin:0"><span class="c-label">The trap<sup class="ref">11</sup></span><p style="font-size:22px">A tool_use input cut off by max_tokens often <em>parses fine</em>: the SDK's tolerant JSON parser returns a valid partial object. No exception fires. The only signal is <code>stop_reason == "max_tokens"</code>, so check it <strong>before</strong> dispatching anything.</p></div>
+      <div class="callout caution" style="margin:0"><span class="c-label">Why not "Continue."?<sup class="ref">11</sup></span><p style="font-size:22px">The old trick was to leave the truncated assistant turn in place and let the model resume it (prefill). Current models reject a trailing assistant message with a 400. The transcript has to end on a user turn, so the fix is to discard the cut-off turn and retry with room.</p></div>
+    </div>
+  </section>
+
+  <section data-label="Streaming" data-screen-label="12 Streaming" data-speaker-notes="Streaming changes how the harness assembles the assistant turn: it arrives as events, and the turn must be rebuilt before it can be appended." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:64px 104px;display:flex;flex-direction:column"><div style="margin-bottom:26px"><div style="font-family:var(--mono);font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);margin-bottom:10px">02 · THE AGENTIC LOOP</div><h2 style="font-family:var(--display);font-weight:700;font-size:54px;margin:0;line-height:1.05">Streaming: rebuilding a turn from events</h2></div>
+    <div style="display:grid;grid-template-columns:1.15fr 1fr;gap:30px;flex:1;min-height:0">
+      <div class="term" style="margin:0"><div class="term-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="lbl">SSE · one turn: text block, then a tool_use block</span></div><pre style="font-size:20px;line-height:1.5"><span class="kw">message_start</span>        <span class="cmt"># id, model, usage.input_tokens
+</span><span class="kw">content_block_start</span>  <span class="cmt"># index 0, type text
+</span><span class="kw">content_block_delta</span>  <span class="cmt"># text_delta  "Reading the"
+</span><span class="kw">content_block_delta</span>  <span class="cmt"># text_delta  " test first."
+</span><span class="kw">content_block_stop</span>   <span class="cmt"># index 0
+</span><span class="kw">content_block_start</span>  <span class="cmt"># index 1, type tool_use, id, name
+</span><span class="kw">content_block_delta</span>  <span class="cmt"># input_json_delta  partial_json: {"pa
+</span><span class="kw">content_block_delta</span>  <span class="cmt"># input_json_delta  partial_json: th": "tests/
+</span><span class="kw">content_block_delta</span>  <span class="cmt"># input_json_delta  partial_json: test_auth.py"}
+</span><span class="kw">content_block_stop</span>   <span class="cmt"># index 1 → now concat + json.loads
+</span><span class="kw">message_delta</span>        <span class="cmt"># stop_reason: tool_use, usage.output_tokens
+</span><span class="kw">message_stop</span></pre></div>
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <div class="breakdown" style="margin:0"><div class="bd-title">What the harness must do</div><dl style="font-size:22px">
+          <dt>text_delta</dt><dd style="font-size:22px">print immediately: this is the whole reason to stream</dd>
+          <dt>input_json_delta</dt><dd style="font-size:22px">fragments of one JSON string; buffer per block index, parse only at content_block_stop</dd>
+          <dt>message_delta</dt><dd style="font-size:22px">carries stop_reason and final output usage: the branch point of the loop</dd>
+          <dt>append</dt><dd style="font-size:22px">rebuild the full assistant content list from the blocks and append it to the transcript, same as non-streaming</dd>
+        </dl></div>
+        <div class="callout why" style="margin:0"><span class="c-label">Why it matters<sup class="ref">10</sup></span><p style="font-size:23px">Nothing about the loop changes. What changes is that the assistant turn is no longer handed to you whole: the harness now owns reassembly, and a bug there (a dropped fragment, parsing before stop) corrupts the transcript for every later iteration.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section data-label="Loop in the wild" data-screen-label="13 Loop in the wild" data-speaker-notes="Every harness has one loop; the job is to find where it lives. Hermes splits it into a turn_* pipeline under agent/, driven from run_agent.py." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:72px 104px;display:flex;flex-direction:column">
+    <div style="margin-bottom:36px"><div style="font-family:var(--mono);font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);margin-bottom:10px">02 · THE AGENTIC LOOP</div><h2 style="font-family:var(--display);font-weight:700;font-size:58px;margin:0;line-height:1.05">Every harness has one loop — find it</h2></div>
+    <p style="font-size:28px;color:var(--text-dim);line-height:1.6;margin:0 0 30px;max-width:36em">Open any harness's source and somewhere there is one loop. In a small harness it is one function; in a big one it is split across a pipeline of phase modules. Either way, everything else — tools, memory, UI — is called <em>from</em> it. Finding where it lives tells you how the whole product works.</p>
+    <div class="callout bz" style="margin:0 0 26px"><span class="c-label">Hermes · where the loop lives<sup class="ref">6</sup></span><p style="font-size:26px">The <code>AIAgent</code> class is in <code>run_agent.py</code>, assembled from mixins. The loop body is <code>agent/conversation_loop.py</code> (about 1,800 lines), which calls a pipeline of <code>agent/turn_*</code> phase modules: <strong>request assembly</strong> (system prompt + memory + transcript), <strong>API call and error handling</strong> (retries), <strong>response intake</strong>, <strong>tool round</strong>, <strong>finalizer</strong>. Same five concerns as our 50-line loop, one module each. The subsystems of §03–§05 are exactly the things these phases call out to.</p></div>
     <div class="callout do" style="margin:0"><span class="c-label">Study move</span><p style="font-size:26px">When evaluating any harness, find its loop file first. Ask: how does it build the prompt, dispatch tools, and decide to stop? Those three answers characterize the product.</p></div>
   </section>
 
-  <section data-label="Recall 02" data-screen-label="12 Recall 02" data-speaker-notes="" style="background:radial-gradient(900px 600px at 80% -10%,var(--bg-glow-violet),transparent 60%),linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:72px 104px;display:flex;flex-direction:column">
+  <section data-label="Recall 02" data-screen-label="14 Recall 02" data-speaker-notes="" style="background:radial-gradient(900px 600px at 80% -10%,var(--bg-glow-violet),transparent 60%),linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:72px 104px;display:flex;flex-direction:column">
     <div style="margin-bottom:36px"><div style="font-family:var(--mono);font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:var(--violet);margin-bottom:10px">CHECKPOINT · SECTION 02</div><h2 style="font-family:var(--display);font-weight:700;font-size:58px;margin:0">Recall — answer before you open</h2></div><div style="flex:1;min-height:0;overflow-y:auto">
     <details class="recall"><summary>Q1 · The replay</summary><div class="recall-body"><p class="q">What exactly gets sent to the model on iteration 7 of the loop?</p><p class="a">The system prompt plus the <em>entire</em> message array — all six previous iterations' assistant turns and tool results. The API is stateless; every call replays everything.</p></div></details>
     <details class="recall"><summary>Q2 · Whose voice?</summary><div class="recall-body"><p class="q">Tool results arrive under which role, and why is that a sane design?</p><p class="a">Role "user". From the model's perspective there are only two speakers: itself and the world. Tool results are the world answering back.</p></div></details>
-    <details class="recall"><summary>Q3 · Three exits</summary><div class="recall-body"><p class="q">Name three distinct ways an agentic loop terminates.</p><p class="a">Model returns end_turn (task done); harness cap hits (max iterations / budget / timeout); human interrupts. Bonus: loop detection on repeated identical failures.</p></div></details></div>
+    <details class="recall"><summary>Q3 · Three exits</summary><div class="recall-body"><p class="q">Name three distinct ways an agentic loop terminates.</p><p class="a">Model returns end_turn (task done); harness cap hits (max iterations / budget / timeout); human interrupts. Bonus: loop detection on repeated identical failures.</p></div></details>
+    <details class="recall"><summary>Q4 · Cut off mid-call</summary><div class="recall-body"><p class="q">stop_reason is max_tokens and the turn contains a tool_use block whose input parsed without error. What do you do, and why isn't "it parsed" enough?</p><p class="a">Discard the turn and retry with a larger max_tokens. The tolerant parser returns a valid partial object, so a clean parse proves nothing; the stop_reason is the only signal that the input is incomplete. Running it executes a tool with half its arguments.</p></div></details>
+    <details class="recall"><summary>Q5 · Streaming</summary><div class="recall-body"><p class="q">In a streamed turn, which event tells the harness which branch of the loop to take, and when is it safe to parse a tool's input?</p><p class="a">message_delta carries stop_reason. Tool input arrives as input_json_delta fragments of one JSON string; buffer them by block index and parse only after that block's content_block_stop.</p></div></details></div>
   </section>
 
-  <section data-label="What a tool is" data-screen-label="13 Tool schema" data-speaker-notes="A tool is just an advertised JSON schema. The model is trained to emit calls matching it." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:64px 104px;display:flex;flex-direction:column">
+  <section data-label="What a tool is" data-screen-label="15 Tool schema" data-speaker-notes="A tool is just an advertised JSON schema. The model is trained to emit calls matching it." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:64px 104px;display:flex;flex-direction:column">
     <div style="margin-bottom:28px"><div style="font-family:var(--mono);font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);margin-bottom:10px">03 · TOOLS &amp; THE ROUND TRIP</div><h2 style="font-family:var(--display);font-weight:700;font-size:56px;margin:0;line-height:1.05">A tool is a JSON schema you advertise</h2></div>
     <div style="display:grid;grid-template-columns:1.25fr 1fr;gap:34px;flex:1;min-height:0">
       <div class="term" style="margin:0"><div class="term-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="lbl">tools[] — sent with every API request</span></div><pre style="font-size:24px;line-height:1.6">{
@@ -253,7 +298,7 @@
     </div>
   </section>
 
-  <section data-label="tool_use anatomy" data-screen-label="14 tool_use / tool_result" data-speaker-notes="The two halves of a call. The model never executes anything." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:64px 104px;display:flex;flex-direction:column">
+  <section data-label="tool_use anatomy" data-screen-label="16 tool_use / tool_result" data-speaker-notes="The two halves of a call. The model never executes anything." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:64px 104px;display:flex;flex-direction:column">
     <div style="margin-bottom:28px"><div style="font-family:var(--mono);font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);margin-bottom:10px">03 · TOOLS &amp; THE ROUND TRIP</div><h2 style="font-family:var(--display);font-weight:700;font-size:56px;margin:0;line-height:1.05">The two halves of a tool call</h2></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-bottom:30px">
       <div class="term" style="margin:0"><div class="term-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="lbl">model → harness · in the assistant message</span></div><pre style="font-size:24px;line-height:1.65">{
@@ -275,7 +320,7 @@
     <div class="callout warn" style="margin:0"><span class="c-label">The security-critical fact</span><p style="font-size:26px"><strong>The model never executes anything.</strong> It emits a request; the harness chooses whether and how to run it. Every permission system, sandbox, and safety property of an agent lives in that gap.</p></div>
   </section>
 
-  <section data-label="Round trip stepped" data-screen-label="15 Round trip animation" data-speaker-notes="Six stations, one tool call. Step through. Permission gate is where safety lives." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:64px 104px;display:flex;flex-direction:column">
+  <section data-label="Round trip stepped" data-screen-label="17 Round trip animation" data-speaker-notes="Six stations, one tool call. Step through. Permission gate is where safety lives." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:64px 104px;display:flex;flex-direction:column">
     <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:34px">
       <div><div style="font-family:var(--mono);font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);margin-bottom:10px">03 · TOOLS · STEPPED</div><h2 style="font-family:var(--display);font-weight:700;font-size:54px;margin:0">One tool call, end to end</h2></div>
       <div style="display:flex;gap:14px;align-items:center">
@@ -292,7 +337,7 @@
     <div style="background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--cyan);border-radius:0 11px 11px 0;padding:26px 32px;min-height:150px"><div style="font-family:var(--mono);font-size:22px;letter-spacing:.16em;color:var(--cyan);text-transform:uppercase;margin-bottom:10px">{{ rtStageName }}</div><div style="font-size:27px;color:var(--text);line-height:1.55">{{ rtNote }}</div></div>
   </section>
 
-  <section data-label="Errors and parallelism" data-screen-label="16 Errors" data-speaker-notes="Errors are data. Feed them back; the model self-corrects. Parallel calls batch in one turn." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:72px 104px;display:flex;flex-direction:column">
+  <section data-label="Errors and parallelism" data-screen-label="18 Errors" data-speaker-notes="Errors are data. Feed them back; the model self-corrects. Parallel calls batch in one turn." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:72px 104px;display:flex;flex-direction:column">
     <div style="margin-bottom:40px"><div style="font-family:var(--mono);font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);margin-bottom:10px">03 · TOOLS &amp; THE ROUND TRIP</div><h2 style="font-family:var(--display);font-weight:700;font-size:58px;margin:0;line-height:1.05">Errors are data, not crashes</h2></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-bottom:34px">
       <div class="callout do" style="margin:0"><span class="c-label">Do</span><p style="font-size:26px">When a tool fails — file missing, command non-zero, timeout — return the error text <strong>as the tool_result</strong>. The model reads it and self-corrects on the next iteration ("the file moved; searching for it…"). Agent robustness comes from this, not from harness cleverness.</p></div>
@@ -305,7 +350,31 @@
     </ul>
   </section>
 
-  <section data-label="Tool families" data-screen-label="17 Tool families" data-speaker-notes="Standard families + MCP as the USB port. Hermes plugin catalog callout." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:72px 104px;display:flex;flex-direction:column">
+  <section data-label="Parallel tool calls" data-screen-label="19 Parallel calls" data-speaker-notes="Parallel tool use is on by default. The rule that matters: all results back in ONE user message, matched by id." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:64px 104px;display:flex;flex-direction:column"><div style="margin-bottom:26px"><div style="font-family:var(--mono);font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);margin-bottom:10px">03 · TOOLS &amp; THE ROUND TRIP</div><h2 style="font-family:var(--display);font-weight:700;font-size:54px;margin:0;line-height:1.05">Parallel tool calls, mechanically</h2></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:28px;margin-bottom:22px">
+      <div class="term" style="margin:0"><div class="term-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="lbl">assistant turn · two requests at once</span></div><pre style="font-size:19px;line-height:1.45">{"role": <span class="str">"assistant"</span>, "content": [
+  {"type": <span class="kw">"tool_use"</span>, "id": <span class="str">"tu_1"</span>,
+   "name": "read_file", "input": {"path": "auth.py"}},
+  {"type": <span class="kw">"tool_use"</span>, "id": <span class="str">"tu_2"</span>,
+   "name": "read_file", "input": {"path": "tests/test_auth.py"}}
+]}</pre></div>
+      <div class="term" style="margin:0"><div class="term-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="lbl">user turn · ONE message, every result</span></div><pre style="font-size:19px;line-height:1.45">{"role": <span class="str">"user"</span>, "content": [
+  {"type": <span class="kw">"tool_result"</span>, "tool_use_id": <span class="str">"tu_1"</span>,
+   "content": "def check_token(t): ..."},
+  {"type": <span class="kw">"tool_result"</span>, "tool_use_id": <span class="str">"tu_2"</span>,
+   <span class="flag">"is_error": true</span>,
+   "content": "FileNotFoundError: tests/test_auth.py"}
+]}</pre></div>
+    </div>
+    <ul style="margin:0 0 20px;padding-left:30px;font-size:24px;line-height:1.65;color:var(--text-dim)">
+      <li><strong style="color:var(--text)">Run them concurrently</strong> — a thread pool or async gather; each still gets its own timeout and output cap.</li>
+      <li><strong style="color:var(--text)">Answer every id</strong> — one tool_result per tool_use, in one user message. A failed one is <code>is_error: true</code> with the error text, not a missing entry.</li>
+      <li><strong style="color:var(--text)">Opt out per request</strong> — <code>tool_choice: {"type": "auto", "disable_parallel_tool_use": true}</code> caps it at one call per turn, for tools with side effects that must be ordered.</li>
+    </ul>
+    <div class="callout warn" style="margin:0"><span class="c-label">Don't split the results<sup class="ref">11</sup></span><p style="font-size:24px">Returning two results as two user messages leaves a tool_use without its matching result in the same turn. Anthropic's docs warn that this silently trains the model to stop making parallel calls, so the agent gets slower and you won't know why.</p></div>
+  </section>
+
+  <section data-label="Tool families" data-screen-label="20 Tool families" data-speaker-notes="Standard families + MCP as the USB port. Hermes plugin catalog callout." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:72px 104px;display:flex;flex-direction:column">
     <div style="margin-bottom:36px"><div style="font-family:var(--mono);font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);margin-bottom:10px">03 · TOOLS &amp; THE ROUND TRIP</div><h2 style="font-family:var(--display);font-weight:700;font-size:58px;margin:0;line-height:1.05">The standard toolbox, and MCP</h2></div>
     <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:18px;margin-bottom:32px">
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:20px"><b style="font-family:var(--display);font-size:25px;color:var(--cyan)">Files</b><div style="font-size:24px;color:var(--text-faint);margin-top:8px">read, write, edit, glob, grep</div></div>
@@ -315,17 +384,66 @@
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:20px"><b style="font-family:var(--display);font-size:25px;color:var(--violet)">MCP</b><div style="font-size:24px;color:var(--text-faint);margin-top:8px">plug-in tool servers over a standard protocol</div></div>
     </div>
     <div class="callout why" style="margin:0 0 24px"><span class="c-label">MCP in one line</span><p style="font-size:26px">Model Context Protocol is a standard for external processes to advertise tools to any harness — the USB port that saves every harness from hand-writing every integration.</p></div>
-    <div class="callout bz" style="margin:0"><span class="c-label">Hermes · plugins &amp; gateway</span><p style="font-size:26px">Hermes ships a reviewed <strong>plugin catalog</strong> (about 100 official + community plugins: browsing, desktop control, platforms) and a messaging gateway exposing the same agent over 20+ chat platforms — the toolbox and the interfaces both extend without touching the loop.</p></div>
+    <div class="callout bz" style="margin:0"><span class="c-label">Hermes · plugins &amp; gateway<sup class="ref">1</sup><sup class="ref">3</sup></span><p style="font-size:26px">Hermes ships a <strong>plugin catalog</strong> of roughly 330 entries — 8 tagged official, the rest community — and a messaging gateway exposing the same agent over Telegram, Discord, Slack, WhatsApp, Signal and the CLI from one process. The toolbox and the interfaces both extend without touching the loop.</p></div>
   </section>
 
-  <section data-label="Recall 03" data-screen-label="18 Recall 03" data-speaker-notes="" style="background:radial-gradient(900px 600px at 80% -10%,var(--bg-glow-violet),transparent 60%),linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:72px 104px;display:flex;flex-direction:column">
+  <section data-label="MCP on the wire" data-screen-label="21 MCP wire" data-speaker-notes="MCP is JSON-RPC 2.0 over stdio or Streamable HTTP. Four messages get a harness from cold start to running a tool." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:64px 104px;display:flex;flex-direction:column"><div style="margin-bottom:26px"><div style="font-family:var(--mono);font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);margin-bottom:10px">03 · TOOLS &amp; THE ROUND TRIP</div><h2 style="font-family:var(--display);font-weight:700;font-size:54px;margin:0;line-height:1.05">MCP on the wire: four messages</h2></div>
+    <div style="display:grid;grid-template-columns:1.2fr 1fr;gap:30px;flex:1;min-height:0">
+      <div class="term" style="margin:0"><div class="term-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="lbl">JSON-RPC 2.0 · harness ⇄ tool server</span></div><pre style="font-size:19px;line-height:1.45"><span class="cmt"># 1 · handshake</span>
+→ {"jsonrpc":"2.0","id":1,"method":<span class="kw">"initialize"</span>,
+   "params":{"protocolVersion":"2025-11-25",
+             "capabilities":{},"clientInfo":{"name":"my-harness"}}}
+← {"id":1,"result":{"protocolVersion":"2025-11-25",
+   "capabilities":{"tools":{}},"serverInfo":{"name":"fs-server"}}}
+→ {"jsonrpc":"2.0","method":<span class="kw">"notifications/initialized"</span>}
+ 
+<span class="cmt"># 2 · discover</span>
+→ {"id":2,"method":<span class="kw">"tools/list"</span>}
+← {"id":2,"result":{"tools":[{"name":"read_file",
+   "description":"Read a file…","inputSchema":{…}}]}}
+ 
+<span class="cmt"># 3 · run (this is the tool_use round trip, one hop further)</span>
+→ {"id":3,"method":<span class="kw">"tools/call"</span>,
+   "params":{"name":"read_file","arguments":{"path":"auth.py"}}}
+← {"id":3,"result":{"content":[{"type":"text","text":"def …"}],
+   <span class="flag">"isError":false</span>}}</pre></div>
+      <div style="display:flex;flex-direction:column;gap:18px">
+        <div class="breakdown" style="margin:0"><div class="bd-title">How it plugs into the loop</div><dl style="font-size:22px">
+          <dt>tools/list → tools[]</dt><dd style="font-size:22px">each entry's name, description, inputSchema becomes a tool schema exactly like the hand-written one, re-advertised every call</dd>
+          <dt>tool_use → tools/call</dt><dd style="font-size:22px">the dispatch table's entry for an MCP tool is "forward name + input to that server"</dd>
+          <dt>result → tool_result</dt><dd style="font-size:22px">content array flattens to the tool_result content; isError maps to is_error</dd>
+          <dt>transports</dt><dd style="font-size:22px">stdio (spawn a process, JSON per line) or Streamable HTTP (one POST endpoint, optional SSE stream back)</dd>
+        </dl></div>
+        <div class="callout why" style="margin:0"><span class="c-label">Why it earns the "USB port" line<sup class="ref">12</sup></span><p style="font-size:23px">The loop never learns a new integration. Any process that speaks these four messages shows up as ordinary tools, and the same server works under Claude Code, Hermes, or your 50 lines.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <section data-label="Provider diff" data-screen-label="22 Provider diff" data-speaker-notes="Same loop, different wire format. Four rows are all that changes between Anthropic and OpenAI Chat Completions." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:64px 104px;display:flex;flex-direction:column"><div style="margin-bottom:26px"><div style="font-family:var(--mono);font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);margin-bottom:10px">03 · TOOLS &amp; THE ROUND TRIP</div><h2 style="font-family:var(--display);font-weight:700;font-size:54px;margin:0;line-height:1.05">Same loop, other provider: what actually differs</h2></div>
+    <div class="tbl-scroll" style="margin:0 0 22px"><table style="font-size:22px">
+      <thead><tr><th style="font-size:22px">&nbsp;</th><th style="font-size:22px">Anthropic Messages API<sup class="ref">11</sup></th><th style="font-size:22px">OpenAI Chat Completions<sup class="ref">13</sup></th></tr></thead><tbody>
+      <tr><td style="color:var(--text)">System prompt</td><td>top-level <code>system</code> parameter, outside the message array</td><td>first element of <code>messages</code>, <code>role: "system"</code> (newer models: <code>"developer"</code>)</td></tr>
+      <tr><td style="color:var(--text)">Tool call from the model</td><td><code>tool_use</code> content block: <code>id</code>, <code>name</code>, <code>input</code> as a parsed <strong>object</strong></td><td><code>tool_calls[]</code> on the message: <code>id</code>, <code>function.name</code>, <code>function.arguments</code> as a JSON <strong>string</strong> you must <code>json.loads</code></td></tr>
+      <tr><td style="color:var(--text)">Tool result back</td><td><code>tool_result</code> block inside a <code>role: "user"</code> message, matched by <code>tool_use_id</code></td><td>its own message with <code>role: "tool"</code>, matched by <code>tool_call_id</code>, one per call</td></tr>
+      <tr><td style="color:var(--text)">Stop signal</td><td><code>stop_reason</code>: <code>tool_use</code> / <code>end_turn</code> / <code>max_tokens</code> …</td><td><code>finish_reason</code>: <code>tool_calls</code> / <code>stop</code> / <code>length</code> / <code>content_filter</code></td></tr>
+    </tbody></table></div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:24px">
+      <div class="callout do" style="margin:0"><span class="c-label">What stays the same</span><p style="font-size:23px">Tool schemas are JSON Schema on both. The transcript is still an append-only array replayed in full. The loop body is still call → append → branch on stop → dispatch → append. A model-agnostic harness like Hermes is an adapter over these four rows, nothing more.</p></div>
+      <div class="callout caution" style="margin:0"><span class="c-label">One more shape exists</span><p style="font-size:23px">OpenAI's newer Responses API swaps the message array for an <code>input</code> list of typed items and moves the system text to an <code>instructions</code> field. Different names, same loop. This deck stays on the Anthropic shape from here.</p></div>
+    </div>
+  </section>
+
+  <section data-label="Recall 03" data-screen-label="23 Recall 03" data-speaker-notes="" style="background:radial-gradient(900px 600px at 80% -10%,var(--bg-glow-violet),transparent 60%),linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:72px 104px;display:flex;flex-direction:column">
     <div style="margin-bottom:36px"><div style="font-family:var(--mono);font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:var(--violet);margin-bottom:10px">CHECKPOINT · SECTION 03</div><h2 style="font-family:var(--display);font-weight:700;font-size:58px;margin:0">Recall — answer before you open</h2></div><div style="flex:1;min-height:0;overflow-y:auto">
     <details class="recall"><summary>Q1 · Where's the code?</summary><div class="recall-body"><p class="q">A tool definition contains no code. Where does the code live, and how does a tool_use block find it?</p><p class="a">In the harness — a dispatch table keyed by tool name. The tool_use block's "name" field is the lookup key; "input" becomes the arguments.</p></div></details>
     <details class="recall"><summary>Q2 · The gap</summary><div class="recall-body"><p class="q">Why is "the model never executes anything" the foundation of agent safety?</p><p class="a">Because every dangerous action passes through the harness between request and execution — that gap is where validation, permission gates, and sandboxes can exist at all.</p></div></details>
-    <details class="recall"><summary>Q3 · Failed tool</summary><div class="recall-body"><p class="q">read_file throws FileNotFoundError. What should the harness send back, and what happens next?</p><p class="a">A tool_result whose content is the error text. Next iteration the model sees it and adapts — lists the directory, searches, or asks. The loop never crashes.</p></div></details></div>
+    <details class="recall"><summary>Q3 · Failed tool</summary><div class="recall-body"><p class="q">read_file throws FileNotFoundError. What should the harness send back, and what happens next?</p><p class="a">A tool_result whose content is the error text. Next iteration the model sees it and adapts — lists the directory, searches, or asks. The loop never crashes.</p></div></details>
+    <details class="recall"><summary>Q4 · Two at once</summary><div class="recall-body"><p class="q">The model emits two tool_use blocks in one turn. How many user messages go back, and what must each result carry?</p><p class="a">One user message containing both tool_result blocks, each with the matching tool_use_id; a failure is is_error: true with the error text, never a missing entry. Splitting across messages trains the model away from parallel calls.</p></div></details>
+    <details class="recall"><summary>Q5 · MCP handshake</summary><div class="recall-body"><p class="q">Name the JSON-RPC messages a harness exchanges with an MCP server before it can run a tool, and what it does with the tools/list result.</p><p class="a">initialize (request/response), the notifications/initialized notification, then tools/list. Each listed tool's name, description and inputSchema becomes an entry in the tools[] array advertised to the model; tools/call is the dispatch target.</p></div></details>
+    <details class="recall"><summary>Q6 · Other provider</summary><div class="recall-body"><p class="q">Where does OpenAI's Chat Completions put the tool arguments, and what does your dispatch code have to do differently?</p><p class="a">In tool_calls[].function.arguments as a JSON string, not an object. Dispatch must json.loads it first; on Anthropic, tool_use.input is already parsed.</p></div></details></div>
   </section>
 
-  <section data-label="Context window" data-screen-label="19 Context window" data-speaker-notes="The window is the whole world. Tool results are the fat." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:72px 104px;display:flex;flex-direction:column">
+  <section data-label="Context window" data-screen-label="24 Context window" data-speaker-notes="The window is the whole world. Tool results are the fat." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:72px 104px;display:flex;flex-direction:column">
     <div style="margin-bottom:36px"><div style="font-family:var(--mono);font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);margin-bottom:10px">04 · CONTEXT MANAGEMENT</div><h2 style="font-family:var(--display);font-weight:700;font-size:58px;margin:0;line-height:1.05">The window is the agent's entire world</h2></div>
     <div class="cards" style="grid-template-columns:repeat(3,1fr);margin:0 0 34px">
       <div class="card" style="padding:26px"><div class="k" style="font-size:52px">finite</div><div class="l" style="font-size:24px">a context window (say 200K tokens) bounds everything the model can consider at once</div></div>
@@ -335,7 +453,7 @@
     <div class="callout why" style="margin:0"><span class="c-label">Why this is a harness job</span><p style="font-size:26px">The model can't manage its own diet — it only ever sees what it's fed. Deciding <strong>what enters, what stays, and what gets summarized away</strong> is pure harness engineering, and it's what separates a demo from a product.</p></div>
   </section>
 
-  <section data-label="Context stepped" data-screen-label="20 Context animation" data-speaker-notes="Step: fresh, growth, pressure, near-overflow, compaction. Details traded for decisions." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:64px 104px;display:flex;flex-direction:column">
+  <section data-label="Context stepped" data-screen-label="25 Context animation" data-speaker-notes="Step: fresh, growth, pressure, near-overflow, compaction. Details traded for decisions." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:64px 104px;display:flex;flex-direction:column">
     <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:40px">
       <div><div style="font-family:var(--mono);font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);margin-bottom:10px">04 · CONTEXT · STEPPED</div><h2 style="font-family:var(--display);font-weight:700;font-size:54px;margin:0">Fill-up and compaction</h2></div>
       <div style="display:flex;gap:14px;align-items:center">
@@ -353,7 +471,7 @@
     <div style="background:var(--surface);border:1px solid var(--border);border-left:4px solid var(--cyan);border-radius:0 11px 11px 0;padding:26px 32px;min-height:140px"><div style="font-size:27px;color:var(--text);line-height:1.55">{{ ctxNote }}</div></div>
   </section>
 
-  <section data-label="Context techniques" data-screen-label="21 Context techniques" data-speaker-notes="Four techniques in escalation order. Hermes FTS5 recall callout." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:72px 104px;display:flex;flex-direction:column">
+  <section data-label="Context techniques" data-screen-label="26 Context techniques" data-speaker-notes="Four techniques in escalation order. Hermes FTS5 recall callout." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:72px 104px;display:flex;flex-direction:column">
     <div style="margin-bottom:34px"><div style="font-family:var(--mono);font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);margin-bottom:10px">04 · CONTEXT MANAGEMENT</div><h2 style="font-family:var(--display);font-weight:700;font-size:58px;margin:0;line-height:1.05">The four standard moves</h2></div>
     <ol class="checklist" style="margin:0 0 26px;font-size:25px">
       <li style="font-size:25px"><b style="font-family:var(--display);color:var(--text)">Trim tool results</b> — cap every result at N chars on append; drop or shrink old ones once they've been acted on.</li>
@@ -361,17 +479,17 @@
       <li style="font-size:25px"><b style="font-family:var(--display);color:var(--text)">Isolate with sub-agents</b> — spawn a fresh loop with its own empty window for a side-task; only its final report returns to the parent.</li>
       <li style="font-size:25px"><b style="font-family:var(--display);color:var(--text)">Retrieve instead of stuffing</b> — keep knowledge outside the window (files, DB) and pull only what the current step needs.</li>
     </ol>
-    <div class="callout bz" style="margin:0"><span class="c-label">Hermes · memory over retrieval</span><p style="font-size:26px">Hermes stores session history in SQLite with <strong>FTS5 full-text search</strong> and uses LLM summarization for cross-session recall — move 4 made permanent. Past sessions aren't in the window; they're indexed and retrieved on demand.</p></div>
+    <div class="callout bz" style="margin:0"><span class="c-label">Hermes · memory over retrieval<sup class="ref">1</sup></span><p style="font-size:26px">Hermes stores session history in SQLite with <strong>FTS5 full-text search</strong> and uses LLM summarization for cross-session recall — move 4 made permanent. Past sessions aren't in the window; they're indexed and retrieved on demand.</p></div>
   </section>
 
-  <section data-label="Recall 04" data-screen-label="22 Recall 04" data-speaker-notes="" style="background:radial-gradient(900px 600px at 80% -10%,var(--bg-glow-violet),transparent 60%),linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:72px 104px;display:flex;flex-direction:column">
+  <section data-label="Recall 04" data-screen-label="27 Recall 04" data-speaker-notes="" style="background:radial-gradient(900px 600px at 80% -10%,var(--bg-glow-violet),transparent 60%),linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:72px 104px;display:flex;flex-direction:column">
     <div style="margin-bottom:36px"><div style="font-family:var(--mono);font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:var(--violet);margin-bottom:10px">CHECKPOINT · SECTION 04</div><h2 style="font-family:var(--display);font-weight:700;font-size:58px;margin:0">Recall — answer before you open</h2></div><div style="flex:1;min-height:0;overflow-y:auto">
     <details class="recall"><summary>Q1 · The fat</summary><div class="recall-body"><p class="q">Why do tool results, not conversation, dominate context consumption?</p><p class="a">Turns of dialogue are short; tool results are raw world-output — whole files, test logs, web pages. One read_file can outweigh dozens of exchanges, and the loop replays all of it every iteration.</p></div></details>
     <details class="recall"><summary>Q2 · The trade</summary><div class="recall-body"><p class="q">What does compaction keep and what does it sacrifice?</p><p class="a">Keeps decisions, conclusions, and current task state; sacrifices verbatim detail (exact file contents, full logs). The agent can re-fetch details through tools; it can't re-derive lost decisions.</p></div></details>
     <details class="recall"><summary>Q3 · Sub-agents</summary><div class="recall-body"><p class="q">How does spawning a sub-agent help with context, specifically?</p><p class="a">The side-task's noisy tool traffic happens in the sub-agent's own fresh window and dies with it — only a short final report enters the parent's transcript.</p></div></details></div>
   </section>
 
-  <section data-label="System prompt" data-screen-label="23 System prompt" data-speaker-notes="Identity + rules + environment + tool guidance. Hermes SOUL.md." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:72px 104px;display:flex;flex-direction:column">
+  <section data-label="System prompt" data-screen-label="28 System prompt" data-speaker-notes="Identity + rules + environment + tool guidance. Hermes SOUL.md." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:72px 104px;display:flex;flex-direction:column">
     <div style="margin-bottom:34px"><div style="font-family:var(--mono);font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);margin-bottom:10px">05 · THE REST OF THE ANATOMY</div><h2 style="font-family:var(--display);font-weight:700;font-size:58px;margin:0;line-height:1.05">System prompt: the standing orders</h2></div>
     <p style="font-size:27px;color:var(--text-dim);line-height:1.6;margin:0 0 28px;max-width:38em">Pinned first in every single API call, invisible to the user, written by the harness. Four jobs:</p>
     <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:32px">
@@ -380,10 +498,10 @@
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:22px"><b style="font-family:var(--display);font-size:25px;color:var(--green)">Environment</b><div style="font-size:24px;color:var(--text-faint);margin-top:8px">cwd, OS, date, repo layout — injected fresh each session</div></div>
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:22px"><b style="font-family:var(--display);font-size:25px;color:var(--violet)">Tool guidance</b><div style="font-size:24px;color:var(--text-faint);margin-top:8px">when to prefer which tool, output conventions</div></div>
     </div>
-    <div class="callout bz" style="margin:0"><span class="c-label">Hermes · SOUL.md</span><p style="font-size:26px">Hermes makes identity a <strong>user-editable file</strong>: SOUL.md holds the agent's persona and priorities per profile, next to its config.yaml. Editing a markdown file re-personalities the agent — the system prompt made into a surface, not a secret.</p></div>
+    <div class="callout bz" style="margin:0"><span class="c-label">Hermes · SOUL.md<sup class="ref">4</sup></span><p style="font-size:26px">Hermes makes identity a <strong>user-editable file</strong>: SOUL.md holds the agent's persona and priorities per profile, next to its config.yaml. Editing a markdown file re-personalities the agent — the system prompt made into a surface, not a secret.</p></div>
   </section>
 
-  <section data-label="Memory" data-screen-label="24 Memory" data-speaker-notes="In-window vs persistent. Hermes holographic memory: agent-curated facts + nudges." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:72px 104px;display:flex;flex-direction:column">
+  <section data-label="Memory" data-screen-label="29 Memory" data-speaker-notes="In-window vs persistent. Hermes holographic memory: agent-curated facts + nudges." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:72px 104px;display:flex;flex-direction:column">
     <div style="margin-bottom:34px"><div style="font-family:var(--mono);font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);margin-bottom:10px">05 · THE REST OF THE ANATOMY</div><h2 style="font-family:var(--display);font-weight:700;font-size:58px;margin:0;line-height:1.05">Memory: surviving the end of the window</h2></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-bottom:30px">
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:28px 32px">
@@ -395,11 +513,11 @@
         <p style="font-size:25px;color:var(--text-dim);line-height:1.6;margin:0">Written to disk by the harness and re-injected later: instruction files (CLAUDE.md / AGENTS.md), fact databases, session summaries.</p>
       </div>
     </div>
-    <div class="callout bz" style="margin:0 0 24px"><span class="c-label">Hermes · holographic memory</span><p style="font-size:26px">An <strong>agent-curated</strong> fact store (SQLite + FTS5): the harness periodically <em>nudges</em> the model to record what it learned, and retrieval searches those facts across sessions. The agent maintains its own notebook rather than the user maintaining it.</p></div>
+    <div class="callout bz" style="margin:0 0 24px"><span class="c-label">Hermes · holographic memory<sup class="ref">5</sup></span><p style="font-size:26px">An <strong>agent-curated</strong> fact store (SQLite + FTS5): the harness periodically <em>nudges</em> the model to record what it learned, and retrieval searches those facts across sessions. The agent maintains its own notebook rather than the user maintaining it.</p></div>
     <div class="callout caution" style="margin:0"><span class="c-label">Trade-off</span><p style="font-size:26px">Memory injected every session is a standing tax on the window and can go stale. Curation — deciding what <strong>not</strong> to remember — is the hard part.</p></div>
   </section>
 
-  <section data-label="Permissions" data-screen-label="25 Permissions" data-speaker-notes="Gates + sandboxes. Shell = arbitrary code execution. Hermes backends, Odysseus Docker." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:72px 104px;display:flex;flex-direction:column">
+  <section data-label="Permissions" data-screen-label="30 Permissions" data-speaker-notes="Gates + sandboxes. Shell = arbitrary code execution. Hermes backends, Odysseus Docker." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:72px 104px;display:flex;flex-direction:column">
     <div style="margin-bottom:34px"><div style="font-family:var(--mono);font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);margin-bottom:10px">05 · THE REST OF THE ANATOMY</div><h2 style="font-family:var(--display);font-weight:700;font-size:58px;margin:0;line-height:1.05">Permissions and sandboxing</h2></div>
     <div class="callout warn" style="margin:0 0 28px"><span class="c-label">Threat model</span><p style="font-size:26px">A shell tool is <strong>arbitrary code execution</strong> driven by a model that can be wrong or prompt-injected by content it reads. Two defense layers exist:</p></div>
     <div style="display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-bottom:28px">
@@ -412,10 +530,10 @@
         <p style="font-size:24px;color:var(--text-dim);line-height:1.6;margin:0">During execution: contain the blast radius — containers, scoped filesystem mounts, no-network defaults, throwaway VMs. Assume the gate will someday let a bad call through.</p>
       </div>
     </div>
-    <div class="callout bz" style="margin:0"><span class="c-label">In the wild</span><p style="font-size:26px"><strong>Hermes</strong> runs its shell through pluggable backends — local, Docker, SSH, Singularity, Modal — with container hardening and namespace isolation. <strong>Odysseus</strong> runs agents inside a Docker container that can only see folders you explicitly mount — though shell commands can still reach anything inside that container's path: scope carefully.</p></div>
+    <div class="callout bz" style="margin:0"><span class="c-label">In the wild<sup class="ref">1</sup><sup class="ref">7</sup></span><p style="font-size:26px"><strong>Hermes</strong> runs its shell through seven pluggable backends — local, Docker, SSH, Singularity, Modal, Daytona, Vercel Sandbox. <strong>Odysseus</strong> runs agents inside a Docker container whose compose file mounts only specific host directories (data, logs, caches) and deliberately not the Docker socket — though shell commands can still reach anything inside that container: scope carefully.</p></div>
   </section>
 
-  <section data-label="Skills" data-screen-label="26 Skills" data-speaker-notes="Skills = procedures as prompts, loaded on demand. Hermes writes its own." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:72px 104px;display:flex;flex-direction:column">
+  <section data-label="Skills" data-screen-label="31 Skills" data-speaker-notes="Skills = procedures as prompts, loaded on demand. Hermes writes its own." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:72px 104px;display:flex;flex-direction:column">
     <div style="margin-bottom:34px"><div style="font-family:var(--mono);font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);margin-bottom:10px">05 · THE REST OF THE ANATOMY</div><h2 style="font-family:var(--display);font-weight:700;font-size:58px;margin:0;line-height:1.05">Skills: procedures as prompts</h2></div>
     <p style="font-size:27px;color:var(--text-dim);line-height:1.65;margin:0 0 28px;max-width:40em">A skill is a markdown document describing <strong style="color:var(--text)">how to do a recurring task</strong> — steps, conventions, pitfalls — stored by the harness and injected into context only when relevant. Tools extend what an agent <em>can do</em>; skills extend what it <em>knows how to do</em>, with no new code.</p>
     <div style="display:flex;gap:26px;align-items:center;margin-bottom:30px;font-family:var(--mono);font-size:24px">
@@ -423,17 +541,17 @@
       <div style="background:var(--surface);border:1px solid var(--cyan);border-radius:9px;padding:18px 24px;color:var(--cyan)">matching skill loaded into context</div><span style="color:var(--text-faint)">→</span>
       <div style="background:var(--surface);border:1px solid var(--border);border-radius:9px;padding:18px 24px;color:var(--text-dim)">model follows the procedure</div>
     </div>
-    <div class="callout bz" style="margin:0"><span class="c-label">Hermes · the self-improving part</span><p style="font-size:26px">Hermes <strong>creates its own skills</strong> after finishing complex tasks and edits them as they're used — the "self-improving agent" claim is literally: the harness writes better prompts for its future self. Skills follow the open agentskills.io format, so they port across harnesses.</p></div>
+    <div class="callout bz" style="margin:0"><span class="c-label">Hermes · the self-improving part<sup class="ref">1</sup></span><p style="font-size:26px">Hermes <strong>creates its own skills</strong> after finishing complex tasks and edits them as they're used — the "self-improving agent" claim is literally: the harness writes better prompts for its future self. Skills follow the open agentskills.io format, so they port across harnesses.</p></div>
   </section>
 
-  <section data-label="Recall 05" data-screen-label="27 Recall 05" data-speaker-notes="" style="background:radial-gradient(900px 600px at 80% -10%,var(--bg-glow-violet),transparent 60%),linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:72px 104px;display:flex;flex-direction:column">
+  <section data-label="Recall 05" data-screen-label="32 Recall 05" data-speaker-notes="" style="background:radial-gradient(900px 600px at 80% -10%,var(--bg-glow-violet),transparent 60%),linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:72px 104px;display:flex;flex-direction:column">
     <div style="margin-bottom:36px"><div style="font-family:var(--mono);font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:var(--violet);margin-bottom:10px">CHECKPOINT · SECTION 05</div><h2 style="font-family:var(--display);font-weight:700;font-size:58px;margin:0">Recall — answer before you open</h2></div><div style="flex:1;min-height:0;overflow-y:auto">
     <details class="recall"><summary>Q1 · Personality</summary><div class="recall-body"><p class="q">Where does an agent's "personality" physically live, and what does Hermes do differently with it?</p><p class="a">In the system prompt the harness pins to every call. Hermes externalizes it as SOUL.md — a user-editable markdown file per profile.</p></div></details>
     <details class="recall"><summary>Q2 · Memory vs skills</summary><div class="recall-body"><p class="q">Both persist across sessions. What's the difference?</p><p class="a">Memory stores <em>facts</em> (what is true: preferences, project details). Skills store <em>procedures</em> (how to do things). Facts get retrieved; procedures get followed.</p></div></details>
     <details class="recall"><summary>Q3 · Two layers</summary><div class="recall-body"><p class="q">Why have both permission gates and sandboxes, not just one?</p><p class="a">Gates filter intent before execution but will eventually mis-approve (or be injection-tricked); the sandbox bounds the damage when that happens. Defense in depth.</p></div></details></div>
   </section>
 
-  <section data-label="Comparison" data-screen-label="28 Comparison" data-speaker-notes="Orientation table. Same anatomy, different choices per subsystem." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:64px 104px;display:flex;flex-direction:column">
+  <section data-label="Comparison" data-screen-label="33 Comparison" data-speaker-notes="Orientation table. Same anatomy, different choices per subsystem." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:64px 104px;display:flex;flex-direction:column">
     <div style="margin-bottom:28px"><div style="font-family:var(--mono);font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:var(--cyan);margin-bottom:10px">05 · THE REST OF THE ANATOMY</div><h2 style="font-family:var(--display);font-weight:700;font-size:56px;margin:0;line-height:1.05">Four harnesses, same anatomy</h2></div>
     <div class="tbl-scroll" style="margin:0">
       <table style="font-size:24px">
@@ -441,17 +559,17 @@
         <tbody>
           <tr><td style="font-size:24px;color:var(--text)">Focus</td><td style="font-size:24px">coding, terminal</td><td style="font-size:24px">coding, CLI + cloud</td><td style="font-size:24px">personal agent, everywhere</td><td style="font-size:24px">self-hosted workspace</td></tr>
           <tr><td style="font-size:24px;color:var(--text)">Models</td><td style="font-size:24px">Claude only</td><td style="font-size:24px">OpenAI only</td><td style="font-size:24px"><span class="yes">any provider</span></td><td style="font-size:24px"><span class="yes">local (Ollama) or API</span></td></tr>
-          <tr><td style="font-size:24px;color:var(--text)">Interface</td><td style="font-size:24px">terminal, IDE</td><td style="font-size:24px">terminal, IDE, cloud</td><td style="font-size:24px">CLI, desktop, IDE, 20+ messengers</td><td style="font-size:24px">web app</td></tr>
+          <tr><td style="font-size:24px;color:var(--text)">Interface</td><td style="font-size:24px">terminal, IDE</td><td style="font-size:24px">terminal, IDE, cloud</td><td style="font-size:24px">CLI + gateway: Telegram, Discord, Slack, WhatsApp, Signal<sup class="ref">1</sup></td><td style="font-size:24px">web app</td></tr>
           <tr><td style="font-size:24px;color:var(--text)">Memory</td><td style="font-size:24px">CLAUDE.md files</td><td style="font-size:24px">AGENTS.md files</td><td style="font-size:24px">agent-curated SQLite + FTS5</td><td style="font-size:24px">SQLite docs / notes</td></tr>
           <tr><td style="font-size:24px;color:var(--text)">Skills</td><td style="font-size:24px">user-written</td><td style="font-size:24px">user-written</td><td style="font-size:24px"><span class="yes">self-created + self-improving</span></td><td style="font-size:24px">supported</td></tr>
-          <tr><td style="font-size:24px;color:var(--text)">Sandboxing</td><td style="font-size:24px">permission prompts + OS sandbox</td><td style="font-size:24px">cloud sandbox / local approval</td><td style="font-size:24px">pluggable backends (Docker, Modal…)</td><td style="font-size:24px">Docker, scoped mounts</td></tr>
-          <tr><td style="font-size:24px;color:var(--text)">Open source</td><td style="font-size:24px"><span class="no">no</span></td><td style="font-size:24px"><span class="mid">CLI only</span></td><td style="font-size:24px"><span class="yes">MIT</span></td><td style="font-size:24px"><span class="yes">yes</span></td></tr>
+          <tr><td style="font-size:24px;color:var(--text)">Sandboxing</td><td style="font-size:24px">permission prompts + OS sandbox</td><td style="font-size:24px">cloud sandbox / local approval</td><td style="font-size:24px">7 backends (Docker, Modal, Daytona…)<sup class="ref">1</sup></td><td style="font-size:24px">Docker, scoped mounts</td></tr>
+          <tr><td style="font-size:24px;color:var(--text)">Open source</td><td style="font-size:24px"><span class="mid">CLI closed; sandbox runtime open</span><sup class="ref">9</sup></td><td style="font-size:24px"><span class="mid">CLI only</span><sup class="ref">8</sup></td><td style="font-size:24px"><span class="yes">MIT</span><sup class="ref">2</sup></td><td style="font-size:24px"><span class="yes">AGPL-3.0</span><sup class="ref">7</sup></td></tr>
         </tbody>
       </table>
     </div>
   </section>
 
-  <section data-label="Build roadmap" data-screen-label="29 Build roadmap" data-speaker-notes="Six steps. Steps 1-6 are an afternoon. The skeleton on the next two slides is complete." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:72px 104px;display:flex;flex-direction:column">
+  <section data-label="Build roadmap" data-screen-label="34 Build roadmap" data-speaker-notes="Six steps. Steps 1-6 are an afternoon. The skeleton on the next two slides is complete." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:72px 104px;display:flex;flex-direction:column">
     <div style="margin-bottom:30px"><div style="font-family:var(--mono);font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin-bottom:10px">06 · BUILD YOUR OWN</div><h2 style="font-family:var(--display);font-weight:700;font-size:58px;margin:0;line-height:1.05">The roadmap: six steps, one afternoon</h2></div>
     <ol class="checklist" style="margin:0 0 26px">
       <li style="font-size:25px"><b style="font-family:var(--display)">Pick a provider SDK</b> — any messages-style API with tool support (Anthropic, OpenAI, or OpenRouter for model-agnosticism like Hermes).</li>
@@ -464,40 +582,44 @@
     <div class="callout do" style="margin:0"><span class="c-label">The takeaway</span><p style="font-size:26px">A working harness is <strong>~50 lines</strong>. Everything that makes Claude Code or Hermes feel magic is iteration on those 50 lines, not a different idea.</p></div>
   </section>
 
-  <section data-label="Skeleton loop" data-screen-label="30 Skeleton part 1" data-speaker-notes="Part 1: the loop itself. Point at each line: build, call, append, branch." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:64px 104px;display:flex;flex-direction:column">
+  <section data-label="Skeleton loop" data-screen-label="35 Skeleton part 1" data-speaker-notes="Part 1: the loop itself. Point at each line: build, call, append, branch." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:64px 104px;display:flex;flex-direction:column">
     <div style="margin-bottom:24px"><div style="font-family:var(--mono);font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin-bottom:10px">06 · BUILD YOUR OWN · SKELETON 1/2</div><h2 style="font-family:var(--display);font-weight:700;font-size:54px;margin:0">harness.py — the loop</h2></div>
     <div style="display:grid;grid-template-columns:1.35fr 1fr;gap:34px;flex:1;min-height:0">
-      <div class="term" style="margin:0"><div class="term-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="lbl">python-ish · part 1 of 2</span></div><pre style="font-size:22px;line-height:1.5"><span class="kw">import</span> anthropic
+      <div class="term" style="margin:0"><div class="term-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="lbl">python-ish · part 1 of 2</span></div><pre style="font-size:20px;line-height:1.42"><span class="kw">import</span> anthropic
 client = anthropic.Anthropic()
-
+ 
 SYSTEM = <span class="str">"You are a coding agent. Use tools;
           verify your work before finishing."</span>
-
+ 
 <span class="kw">def</span> run_agent(task):
     messages = [{<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: task}]
-    <span class="kw">for</span> _ <span class="kw">in</span> range(<span class="flag">40</span>):              <span class="cmt"># stop condition</span>
+    budget = <span class="flag">4096
+    </span><span class="kw">for</span> _ <span class="kw">in</span> range(<span class="flag">40</span>):              <span class="cmt"># stop condition</span>
         resp = client.messages.create(
-            model=<span class="str">"claude-sonnet-4-5"</span>,
+            model=<span class="str">"claude-sonnet-5"</span>,
             system=SYSTEM,
             tools=TOOL_SCHEMAS,        <span class="cmt"># part 2</span>
             messages=messages,
-            max_tokens=<span class="flag">4096</span>)
+            max_tokens=budget)
+        <span class="kw">if</span> resp.stop_reason == <span class="str">"max_tokens"</span>:   <span class="cmt"># cut off: never run a</span>
+            budget *= <span class="flag">2</span>                          <span class="cmt"># truncated tool call;
+            </span><span class="kw">continue</span>                            <span class="cmt"># retry with room</span>
         messages.append({<span class="str">"role"</span>: <span class="str">"assistant"</span>,
                          <span class="str">"content"</span>: resp.content})
         <span class="kw">if</span> resp.stop_reason != <span class="str">"tool_use"</span>:
-            <span class="kw">return</span> resp                <span class="cmt"># done → answer</span>
+            <span class="kw">return</span> resp                <span class="cmt"># end_turn → answer</span>
         messages.append(run_tools(resp))  <span class="cmt"># part 2</span></pre></div>
       <div class="breakdown" style="margin:0;align-self:start"><div class="bd-title">Breakdown</div><dl style="font-size:24px">
         <dt>messages</dt><dd style="font-size:24px">the transcript — the agent's whole state</dd>
         <dt>range(40)</dt><dd style="font-size:24px">harness-side cap; never while True in production</dd>
         <dt>tools=</dt><dd style="font-size:24px">schemas re-advertised on every call</dd>
         <dt>append assistant</dt><dd style="font-size:24px">the model's own turn must go back into history</dd>
-        <dt>stop_reason</dt><dd style="font-size:24px">the branch: tool_use → keep going, anything else → done</dd>
+        <dt>stop_reason</dt><dd style="font-size:24px">three branches: max_tokens → retry bigger (before appending, so the cut-off turn never enters history), tool_use → act, end_turn → done</dd>
       </dl></div>
     </div>
   </section>
 
-  <section data-label="Skeleton dispatch" data-screen-label="31 Skeleton part 2" data-speaker-notes="Part 2: dispatch. Errors become strings, output capped. That's the whole harness." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:64px 104px;display:flex;flex-direction:column">
+  <section data-label="Skeleton dispatch" data-screen-label="36 Skeleton part 2" data-speaker-notes="Part 2: dispatch. Errors become strings, output capped. That's the whole harness." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:64px 104px;display:flex;flex-direction:column">
     <div style="margin-bottom:24px"><div style="font-family:var(--mono);font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin-bottom:10px">06 · BUILD YOUR OWN · SKELETON 2/2</div><h2 style="font-family:var(--display);font-weight:700;font-size:54px;margin:0">harness.py — tool dispatch</h2></div>
     <div style="display:grid;grid-template-columns:1.35fr 1fr;gap:34px;flex:1;min-height:0">
       <div class="term" style="margin:0"><div class="term-bar"><span class="dot r"></span><span class="dot y"></span><span class="dot g"></span><span class="lbl">python-ish · part 2 of 2</span></div><pre style="font-size:22px;line-height:1.5">TOOLS = {
@@ -506,20 +628,20 @@ SYSTEM = <span class="str">"You are a coding agent. Use tools;
       command, shell=<span class="flag">True</span>, capture_output=<span class="flag">True</span>,
       text=<span class="flag">True</span>, timeout=<span class="flag">60</span>).stdout,
 }
-
+ 
 <span class="kw">def</span> run_tools(resp):
     results = []
     <span class="kw">for</span> block <span class="kw">in</span> resp.content:
-        <span class="kw">if</span> block.type != <span class="str">"tool_use"</span>: <span class="kw">continue</span>
-        <span class="kw">try</span>:
+        <span class="kw">if</span> block.type != <span class="str">"tool_use"</span>: <span class="kw">continue
+        </span><span class="kw">try</span>:
             out = TOOLS[block.name](**block.input)
         <span class="kw">except</span> Exception <span class="kw">as</span> e:
             out = <span class="str">f"ERROR: {e}"</span>   <span class="cmt"># errors are data</span>
         results.append({
             <span class="str">"type"</span>: <span class="str">"tool_result"</span>,
             <span class="str">"tool_use_id"</span>: block.id,
-            <span class="str">"content"</span>: str(out)[:<span class="flag">20000</span>]})  <span class="cmt"># cap fat</span>
-    <span class="kw">return</span> {<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: results}</pre></div>
+            <span class="str">"content"</span>: str(out)[:<span class="flag">20000</span>]})  <span class="cmt"># cap fat
+    </span><span class="kw">return</span> {<span class="str">"role"</span>: <span class="str">"user"</span>, <span class="str">"content"</span>: results}</pre></div>
       <div style="display:flex;flex-direction:column;gap:22px">
         <div class="breakdown" style="margin:0"><div class="bd-title">Breakdown</div><dl style="font-size:24px">
           <dt>TOOLS</dt><dd style="font-size:24px">the dispatch table — name → function; mirrors TOOL_SCHEMAS one-to-one</dd>
@@ -532,7 +654,7 @@ SYSTEM = <span class="str">"You are a coding agent. Use tools;
     </div>
   </section>
 
-  <section data-label="Hardening" data-screen-label="32 Hardening" data-speaker-notes="Order matters: safety first, polish last. Don't build all up front." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:72px 104px;display:flex;flex-direction:column">
+  <section data-label="Hardening" data-screen-label="37 Hardening" data-speaker-notes="Order matters: safety first, polish last. Don't build all up front." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:72px 104px;display:flex;flex-direction:column">
     <div style="margin-bottom:30px"><div style="font-family:var(--mono);font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:var(--green);margin-bottom:10px">06 · BUILD YOUR OWN</div><h2 style="font-family:var(--display);font-weight:700;font-size:58px;margin:0;line-height:1.05">Hardening: what to add, in order</h2></div>
     <ol class="checklist" style="margin:0 0 26px">
       <li style="font-size:25px"><b style="font-family:var(--display)">Permission gate</b> <span class="badge destruct" style="font-size:22px">safety</span> — allow-list reads, confirm writes and shell; or run the whole thing in Docker.</li>
@@ -545,9 +667,9 @@ SYSTEM = <span class="str">"You are a coding agent. Use tools;
     <div class="callout caution" style="margin:0"><span class="c-label">Caution</span><p style="font-size:26px">Don't build 2–6 before you've watched the bare skeleton fail on real tasks. Each subsystem exists to fix a failure you should see first — otherwise you're cargo-culting Hermes's architecture without its lessons.</p></div>
   </section>
 
-  <section data-label="Recall 06 + Recap" data-screen-label="33 Recap" data-speaker-notes="Final recall, then the five lines that summarize the deck." style="background:radial-gradient(1100px 700px at 85% -10%,var(--bg-glow-cyan),transparent 60%),radial-gradient(900px 700px at -8% 50%,var(--bg-glow-violet),transparent 60%),linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:72px 104px;display:flex;flex-direction:column">
+  <section data-label="Recall 06 + Recap" data-screen-label="38 Recap" data-speaker-notes="Final recall, then the five lines that summarize the deck." style="background:radial-gradient(1100px 700px at 85% -10%,var(--bg-glow-cyan),transparent 60%),radial-gradient(900px 700px at -8% 50%,var(--bg-glow-violet),transparent 60%),linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:72px 104px;display:flex;flex-direction:column">
     <div style="margin-bottom:32px"><div style="font-family:var(--mono);font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:var(--violet);margin-bottom:10px">CHECKPOINT · FINAL</div><h2 style="font-family:var(--display);font-weight:700;font-size:58px;margin:0;line-height:1.05">Last recall, then the recap</h2></div>
-    <details class="recall" style="margin-bottom:14px"><summary>Q · Sketch the minimal loop from memory</summary><div class="recall-body"><p class="q">Whiteboard it: what are the five moves inside the loop body?</p><p class="a">1 send system + transcript + tool schemas → 2 append the assistant turn → 3 if stop_reason isn't tool_use, return → 4 execute each tool_use by name, errors as strings, output capped → 5 append results as a user message, repeat.</p></div></details>
+    <details class="recall" style="margin-bottom:14px"><summary>Q · Sketch the minimal loop from memory</summary><div class="recall-body"><p class="q">Whiteboard it: what are the five moves inside the loop body?</p><p class="a">1 send system + transcript + tool schemas → 2 append the assistant turn → 3 branch on stop_reason: max_tokens → discard and retry bigger, tool_use → act, end_turn → return → 4 execute each tool_use by name, errors as strings, output capped → 5 append results as a user message, repeat.</p></div></details>
     <div style="display:grid;grid-template-columns:repeat(5,1fr);gap:18px;margin-top:26px">
       <div class="card" style="padding:22px"><div style="font-family:var(--display);font-size:24px;color:var(--cyan)">Model reasons, harness acts</div><div style="font-size:24px;color:var(--text-dim);margin-top:8px">the one-liner behind everything</div></div>
       <div class="card" style="padding:22px"><div style="font-family:var(--display);font-size:24px;color:var(--cyan)">State = message array</div><div style="font-size:24px;color:var(--text-dim);margin-top:8px">append-only, replayed in full, every call</div></div>
@@ -555,6 +677,12 @@ SYSTEM = <span class="str">"You are a coding agent. Use tools;
       <div class="card" style="padding:22px"><div style="font-family:var(--display);font-size:24px;color:var(--cyan)">Context is the budget</div><div style="font-size:24px;color:var(--text-dim);margin-top:8px">trim, compact, isolate, retrieve</div></div>
       <div class="card" style="padding:22px"><div style="font-family:var(--display);font-size:24px;color:var(--cyan)">Start with 50 lines</div><div style="font-size:24px;color:var(--text-dim);margin-top:8px">harden only against failures you've seen</div></div>
     </div>
+  </section>
+
+  <section data-label="Sources" data-screen-label="39 Sources" data-speaker-notes="Every numbered marker in the deck points here. Checked 2026-09-27 against the repos themselves, not press." style="background:linear-gradient(160deg,#0b101a,var(--bg));color:var(--text);font-family:var(--sans);padding:64px 104px;display:flex;flex-direction:column">
+    <div style="margin-bottom:24px"><div style="font-family:var(--mono);font-size:22px;letter-spacing:.2em;text-transform:uppercase;color:var(--violet);margin-bottom:10px">SOURCES</div><h2 style="font-family:var(--display);font-weight:700;font-size:54px;margin:0;line-height:1.05">What the numbered markers point to</h2></div>
+    <p style="font-size:22px;color:var(--text-dim);margin:0 0 16px">Third-party harness claims checked against the repositories, API claims against vendor docs, on 2026-09-27. Claims about third-party harnesses that could not be verified were removed or reworded.</p>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;flex:1;min-height:0;align-content:start"><div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;display:grid;grid-template-columns:34px 1fr;gap:6px;align-items:start"><span style="font-family:var(--mono);font-size:19px;color:var(--violet)">1</span><span><span style="font-size:18px;line-height:1.3;display:block">Hermes Agent README (model-agnostic, FTS5 session search, agent-curated memory, skills, gateway, seven backends)</span><a href="https://github.com/NousResearch/hermes-agent/blob/main/README.md" style="font-family:var(--mono);font-size:15px;word-break:break-all">github.com/NousResearch/hermes-agent/blob/main/README.md</a></span></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;display:grid;grid-template-columns:34px 1fr;gap:6px;align-items:start"><span style="font-family:var(--mono);font-size:19px;color:var(--violet)">2</span><span><span style="font-size:18px;line-height:1.3;display:block">Hermes Agent LICENSE (MIT, Nous Research)</span><a href="https://github.com/NousResearch/hermes-agent/blob/main/LICENSE" style="font-family:var(--mono);font-size:15px;word-break:break-all">github.com/NousResearch/hermes-agent/blob/main/LICENSE</a></span></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;display:grid;grid-template-columns:34px 1fr;gap:6px;align-items:start"><span style="font-family:var(--mono);font-size:19px;color:var(--violet)">3</span><span><span style="font-size:18px;line-height:1.3;display:block">Hermes plugin-catalog/ (333 entries, 8 tier: official)</span><a href="https://github.com/NousResearch/hermes-agent/tree/main/plugin-catalog" style="font-family:var(--mono);font-size:15px;word-break:break-all">github.com/NousResearch/hermes-agent/tree/main/plugin-catalog</a></span></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;display:grid;grid-template-columns:34px 1fr;gap:6px;align-items:start"><span style="font-family:var(--mono);font-size:19px;color:var(--violet)">4</span><span><span style="font-size:18px;line-height:1.3;display:block">Hermes hermes_cli/profiles.py (config.yaml + SOUL.md per profile)</span><a href="https://github.com/NousResearch/hermes-agent/blob/main/hermes_cli/profiles.py" style="font-family:var(--mono);font-size:15px;word-break:break-all">github.com/NousResearch/hermes-agent/blob/main/hermes_cli/profiles.py</a></span></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;display:grid;grid-template-columns:34px 1fr;gap:6px;align-items:start"><span style="font-family:var(--mono);font-size:19px;color:var(--violet)">5</span><span><span style="font-size:18px;line-height:1.3;display:block">Hermes plugins/memory/holographic/</span><a href="https://github.com/NousResearch/hermes-agent/tree/main/plugins/memory/holographic" style="font-family:var(--mono);font-size:15px;word-break:break-all">github.com/NousResearch/hermes-agent/tree/main/plugins/memory/holographic</a></span></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;display:grid;grid-template-columns:34px 1fr;gap:6px;align-items:start"><span style="font-family:var(--mono);font-size:19px;color:var(--violet)">6</span><span><span style="font-size:18px;line-height:1.3;display:block">Hermes run_agent.py (AIAgent) and agent/conversation_loop.py</span><a href="https://github.com/NousResearch/hermes-agent/blob/main/agent/conversation_loop.py" style="font-family:var(--mono);font-size:15px;word-break:break-all">github.com/NousResearch/hermes-agent/blob/main/agent/conversation_loop.py</a></span></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;display:grid;grid-template-columns:34px 1fr;gap:6px;align-items:start"><span style="font-family:var(--mono);font-size:19px;color:var(--violet)">7</span><span><span style="font-size:18px;line-height:1.3;display:block">Odysseus repo: README, LICENSE (AGPL-3.0), docs/setup.md, docker-compose.yml, specs/persistence.md; PewDiePie attribution via press only</span><a href="https://github.com/odysseus-dev/odysseus" style="font-family:var(--mono);font-size:15px;word-break:break-all">github.com/odysseus-dev/odysseus</a></span></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;display:grid;grid-template-columns:34px 1fr;gap:6px;align-items:start"><span style="font-family:var(--mono);font-size:19px;color:var(--violet)">8</span><span><span style="font-size:18px;line-height:1.3;display:block">openai/codex repo and Codex CLI docs (AGENTS.md, cloud sandbox)</span><a href="https://developers.openai.com/codex/cli" style="font-family:var(--mono);font-size:15px;word-break:break-all">developers.openai.com/codex/cli</a></span></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;display:grid;grid-template-columns:34px 1fr;gap:6px;align-items:start"><span style="font-family:var(--mono);font-size:19px;color:var(--violet)">9</span><span><span style="font-size:18px;line-height:1.3;display:block">Anthropic engineering: Claude Code sandboxing (open-source sandbox runtime; Seatbelt / bubblewrap)</span><a href="https://www.anthropic.com/engineering/claude-code-sandboxing" style="font-family:var(--mono);font-size:15px;word-break:break-all">www.anthropic.com/engineering/claude-code-sandboxing</a></span></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;display:grid;grid-template-columns:34px 1fr;gap:6px;align-items:start"><span style="font-family:var(--mono);font-size:19px;color:var(--violet)">10</span><span><span style="font-size:18px;line-height:1.3;display:block">Anthropic docs: Streaming Messages (event sequence, input_json_delta, message_delta)</span><a href="https://platform.claude.com/docs/en/build-with-claude/streaming" style="font-family:var(--mono);font-size:15px;word-break:break-all">platform.claude.com/docs/en/build-with-claude/streaming</a></span></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;display:grid;grid-template-columns:34px 1fr;gap:6px;align-items:start"><span style="font-family:var(--mono);font-size:19px;color:var(--violet)">11</span><span><span style="font-size:18px;line-height:1.3;display:block">Anthropic docs: Tool use overview (stop reasons, parallel tool use, is_error, max_tokens truncation, no prefill on current models)</span><a href="https://platform.claude.com/docs/en/agents-and-tools/tool-use/overview" style="font-family:var(--mono);font-size:15px;word-break:break-all">platform.claude.com/docs/en/agents-and-tools/tool-use/overview</a></span></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;display:grid;grid-template-columns:34px 1fr;gap:6px;align-items:start"><span style="font-family:var(--mono);font-size:19px;color:var(--violet)">12</span><span><span style="font-size:18px;line-height:1.3;display:block">Model Context Protocol specification 2025-11-25 (initialize, tools/list, tools/call, transports)</span><a href="https://modelcontextprotocol.io/specification/2025-11-25" style="font-family:var(--mono);font-size:15px;word-break:break-all">modelcontextprotocol.io/specification/2025-11-25</a></span></div><div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;display:grid;grid-template-columns:34px 1fr;gap:6px;align-items:start"><span style="font-family:var(--mono);font-size:19px;color:var(--violet)">13</span><span><span style="font-size:18px;line-height:1.3;display:block">OpenAI API reference: Chat Completions (tool_calls, finish_reason) and Responses API migration</span><a href="https://platform.openai.com/docs/api-reference/chat" style="font-family:var(--mono);font-size:15px;word-break:break-all">platform.openai.com/docs/api-reference/chat</a></span></div></div>
   </section>
 
 </x-import>
