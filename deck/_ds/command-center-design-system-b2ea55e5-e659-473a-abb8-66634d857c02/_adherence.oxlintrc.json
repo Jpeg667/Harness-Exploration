@@ -1,0 +1,297 @@
+{
+  "plugins": [
+    "react",
+    "import"
+  ],
+  "rules": {
+    "react/forbid-elements": [
+      "warn",
+      {
+        "forbid": []
+      }
+    ],
+    "no-restricted-imports": [
+      "warn",
+      {
+        "patterns": [
+          {
+            "group": [
+              "components/content/**",
+              "components/data/**",
+              "components/feedback/**",
+              "components/forms/**",
+              "components/layout/**",
+              "components/runbook/**"
+            ],
+            "message": "Import design-system components from 'index.js', not component internals."
+          }
+        ]
+      }
+    ],
+    "no-restricted-syntax": [
+      "warn",
+      {
+        "selector": "Literal[value=/#[0-9a-fA-F]{3,8}\\b/]",
+        "message": "Raw hex color — use a design-system color token via var()."
+      },
+      {
+        "selector": "Literal[value=/\\b\\d+px\\b/]",
+        "message": "Raw px value — use a design-system spacing token via var()."
+      },
+      {
+        "selector": "Literal[value=/font-family\\s*:\\s*(?!['\\\"]?(?:Chakra Petch|IBM Plex Sans|JetBrains Mono))/i]",
+        "message": "Font not provided by the design system. Available: Chakra Petch, IBM Plex Sans, JetBrains Mono."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Alert'] > JSXAttribute > JSXIdentifier[name!=/^(?:variant|onClose|children|key|ref|className|style|children)$/]",
+        "message": "<Alert> doesn't accept that prop. Declared props: variant, onClose, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Badge'] > JSXAttribute > JSXIdentifier[name!=/^(?:variant|children|key|ref|className|style|children)$/]",
+        "message": "<Badge> doesn't accept that prop. Declared props: variant, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='BreakdownItem'] > JSXAttribute > JSXIdentifier[name!=/^(?:term|desc|key|ref|className|style|children)$/]",
+        "message": "<BreakdownItem> doesn't accept that prop. Declared props: term, desc."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Button'] > JSXAttribute > JSXIdentifier[name!=/^(?:variant|disabled|onClick|children|key|ref|className|style|children)$/]",
+        "message": "<Button> doesn't accept that prop. Declared props: variant, disabled, onClick, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Callout'] > JSXAttribute > JSXIdentifier[name!=/^(?:variant|label|children|key|ref|className|style|children)$/]",
+        "message": "<Callout> doesn't accept that prop. Declared props: variant, label, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='CardGrid'] > JSXAttribute > JSXIdentifier[name!=/^(?:children|key|ref|className|style|children)$/]",
+        "message": "<CardGrid> doesn't accept that prop. Declared props: children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Checklist'] > JSXAttribute > JSXIdentifier[name!=/^(?:items|key|ref|className|style|children)$/]",
+        "message": "<Checklist> doesn't accept that prop. Declared props: items."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Diagram'] > JSXAttribute > JSXIdentifier[name!=/^(?:caption|fallback|children|key|ref|className|style|children)$/]",
+        "message": "<Diagram> doesn't accept that prop. Declared props: caption, fallback, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='DocShellSection'] > JSXAttribute > JSXIdentifier[name!=/^(?:id|num|label|key|ref|className|style|children)$/]",
+        "message": "<DocShellSection> doesn't accept that prop. Declared props: id, num, label."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='HeroChip'] > JSXAttribute > JSXIdentifier[name!=/^(?:label|value|key|ref|className|style|children)$/]",
+        "message": "<HeroChip> doesn't accept that prop. Declared props: label, value."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Input'] > JSXAttribute > JSXIdentifier[name!=/^(?:label|id|placeholder|value|onChange|type|key|ref|className|style|children)$/]",
+        "message": "<Input> doesn't accept that prop. Declared props: label, id, placeholder, value, onChange, type."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Label'] > JSXAttribute > JSXIdentifier[name!=/^(?:children|key|ref|className|style|children)$/]",
+        "message": "<Label> doesn't accept that prop. Declared props: children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='LegendItem'] > JSXAttribute > JSXIdentifier[name!=/^(?:key|title|desc|key|ref|className|style|children)$/]",
+        "message": "<LegendItem> doesn't accept that prop. Declared props: key, title, desc."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='LegendItem'] > JSXAttribute[name.name='key'] > Literal[value!=/^(?:cyan|green|amber|red|violet)$/]",
+        "message": "<LegendItem> key must be one of 'cyan' | 'green' | 'amber' | 'red' | 'violet'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='ProgressBar'] > JSXAttribute > JSXIdentifier[name!=/^(?:done|total|onReset|key|ref|className|style|children)$/]",
+        "message": "<ProgressBar> doesn't accept that prop. Declared props: done, total, onReset."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Recall'] > JSXAttribute > JSXIdentifier[name!=/^(?:summary|question|answer|key|ref|className|style|children)$/]",
+        "message": "<Recall> doesn't accept that prop. Declared props: summary, question, answer."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='RunbookItem'] > JSXAttribute > JSXIdentifier[name!=/^(?:key|title|desc|key|ref|className|style|children)$/]",
+        "message": "<RunbookItem> doesn't accept that prop. Declared props: key, title, desc."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='SelectOption'] > JSXAttribute > JSXIdentifier[name!=/^(?:value|label|key|ref|className|style|children)$/]",
+        "message": "<SelectOption> doesn't accept that prop. Declared props: value, label."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='StatCard'] > JSXAttribute > JSXIdentifier[name!=/^(?:value|label|key|ref|className|style|children)$/]",
+        "message": "<StatCard> doesn't accept that prop. Declared props: value, label."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='TableVerdictCell'] > JSXAttribute > JSXIdentifier[name!=/^(?:text|verdict|key|ref|className|style|children)$/]",
+        "message": "<TableVerdictCell> doesn't accept that prop. Declared props: text, verdict."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='TableVerdictCell'] > JSXAttribute[name.name='verdict'] > Literal[value!=/^(?:yes|no|mid)$/]",
+        "message": "<TableVerdictCell> verdict must be one of 'yes' | 'no' | 'mid'."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Terminal'] > JSXAttribute > JSXIdentifier[name!=/^(?:label|code|children|key|ref|className|style|children)$/]",
+        "message": "<Terminal> doesn't accept that prop. Declared props: label, code, children."
+      },
+      {
+        "selector": "JSXOpeningElement[name.name='Textarea'] > JSXAttribute > JSXIdentifier[name!=/^(?:label|id|placeholder|rows|value|onChange|key|ref|className|style|children)$/]",
+        "message": "<Textarea> doesn't accept that prop. Declared props: label, id, placeholder, rows, value, onChange."
+      }
+    ]
+  },
+  "overrides": [
+    {
+      "files": [
+        "**/index.js"
+      ],
+      "rules": {
+        "no-restricted-imports": "off"
+      }
+    }
+  ],
+  "x-omelette": {
+    "components": {
+      "Alert": {
+        "replaces": []
+      },
+      "Badge": {
+        "replaces": []
+      },
+      "BreakdownItem": {
+        "replaces": []
+      },
+      "Button": {
+        "replaces": []
+      },
+      "Callout": {
+        "replaces": []
+      },
+      "CardGrid": {
+        "replaces": []
+      },
+      "Checklist": {
+        "replaces": []
+      },
+      "Diagram": {
+        "replaces": []
+      },
+      "DocShellSection": {
+        "replaces": []
+      },
+      "HeroChip": {
+        "replaces": []
+      },
+      "Input": {
+        "replaces": []
+      },
+      "Label": {
+        "replaces": []
+      },
+      "LegendItem": {
+        "replaces": []
+      },
+      "ProgressBar": {
+        "replaces": []
+      },
+      "Recall": {
+        "replaces": []
+      },
+      "RunbookItem": {
+        "replaces": []
+      },
+      "SelectOption": {
+        "replaces": []
+      },
+      "StatCard": {
+        "replaces": []
+      },
+      "TableVerdictCell": {
+        "replaces": []
+      },
+      "Terminal": {
+        "replaces": []
+      },
+      "Textarea": {
+        "replaces": []
+      }
+    },
+    "tokens": [
+      "--amber",
+      "--bg",
+      "--bg-glow-cyan",
+      "--bg-glow-violet",
+      "--border",
+      "--border-soft",
+      "--cyan",
+      "--display",
+      "--green",
+      "--grid-line",
+      "--maxw",
+      "--mono",
+      "--radius-lg",
+      "--radius-md",
+      "--radius-pill",
+      "--radius-sm",
+      "--radius-xl",
+      "--red",
+      "--sans",
+      "--shadow-term",
+      "--sidebar-w",
+      "--space-1",
+      "--space-2",
+      "--space-3",
+      "--space-4",
+      "--space-5",
+      "--space-6",
+      "--space-7",
+      "--space-8",
+      "--surface",
+      "--surface-2",
+      "--surface-3",
+      "--text",
+      "--text-dim",
+      "--text-faint",
+      "--violet"
+    ],
+    "tokenKinds": {
+      "--cyan": "color",
+      "--green": "color",
+      "--amber": "color",
+      "--red": "color",
+      "--violet": "color",
+      "--bg": "color",
+      "--surface": "color",
+      "--surface-2": "color",
+      "--surface-3": "color",
+      "--border": "color",
+      "--border-soft": "color",
+      "--text": "font",
+      "--text-dim": "font",
+      "--text-faint": "font",
+      "--bg-glow-cyan": "color",
+      "--bg-glow-violet": "color",
+      "--grid-line": "color",
+      "--mono": "font",
+      "--sans": "font",
+      "--display": "font",
+      "--space-1": "spacing",
+      "--space-2": "spacing",
+      "--space-3": "spacing",
+      "--space-4": "spacing",
+      "--space-5": "spacing",
+      "--space-6": "spacing",
+      "--space-7": "spacing",
+      "--space-8": "spacing",
+      "--radius-sm": "radius",
+      "--radius-md": "radius",
+      "--radius-lg": "radius",
+      "--radius-xl": "radius",
+      "--radius-pill": "radius",
+      "--maxw": "spacing",
+      "--sidebar-w": "spacing",
+      "--shadow-term": "shadow"
+    },
+    "fontFamilies": [
+      "Chakra Petch",
+      "IBM Plex Sans",
+      "JetBrains Mono"
+    ]
+  }
+}

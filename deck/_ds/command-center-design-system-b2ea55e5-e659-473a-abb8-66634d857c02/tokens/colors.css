@@ -1,0 +1,28 @@
+:root {
+  /* Semantic accents — FIXED meaning system-wide. Never repurpose. */
+  --cyan: #2ad8d8;    /* WHY / concept / informational / primary accent */
+  --green: #52e08a;   /* DO / correct / safe / success */
+  --amber: #f7b740;   /* CAUTION / trade-off / warning */
+  --red: #ff5a7a;     /* WARN / destructive / error / don't */
+  --violet: #b794ff;  /* NOTE / aside / deeper-dive / secondary accent */
+
+  /* Surfaces, darkest to lightest */
+  --bg: #080b11;
+  --surface: #0f1620;
+  --surface-2: #141d2a;
+  --surface-3: #1a2536;
+
+  /* Borders */
+  --border: #22314a;
+  --border-soft: #192536;
+
+  /* Text */
+  --text: #e7eef6;
+  --text-dim: #9bacc0;
+  --text-faint: #647689;
+
+  /* Background texture (decorative) */
+  --bg-glow-cyan: rgba(42, 216, 216, .08);
+  --bg-glow-violet: rgba(183, 148, 255, .06);
+  --grid-line: rgba(120, 160, 200, .025);
+}
